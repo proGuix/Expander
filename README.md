@@ -35,10 +35,12 @@ Ce projet consiste à créer un complément word de type .dotm.
 La version minimal de word à avoir est 2010.
 
 Le premier objectif est la mise en place d'un traducteur d'abréviation :
-	* Création d'un bouton qui charge un profil. Un profil est composé d'une liste de paires d'élément : une abréviation et sa définition.
-	* Création d'un bouton qui permet de choisir un profil par défaut. Ce profil par défaut sera chargé automatiquement
-	* Création d'une case à cocher qui permet d'activer ou désactiver le traducteur automatiquement. Si la case est coché, dès que l'utilisateur entre une abréviation, celle-ci sera traduit automatiquement.
-	* Création d'un bouton qui lorsqu'on clique effectue la traduction sur tout le document ou une sélection du document.
-	
+
+* Création d'un bouton qui charge un profil. Un profil est composé d'une liste de paires d'élément : une abréviation et sa définition.
+* Création d'un bouton qui permet de choisir un profil par défaut. Ce profil par défaut sera chargé automatiquement
+* Création d'une case à cocher qui permet d'activer ou désactiver le traducteur automatiquement. Si la case est coché, dès que l'utilisateur entre une abréviation, celle-ci sera traduit automatiquement.
+* Création d'un bouton qui lorsqu'on clique effectue la traduction sur tout le document ou une sélection du document.
+
 Le second objectif est la mise en place de l'application d'un style
-	* Création d'un bouton qui applique le style Markdown sur tout le document ou une sélection du document
+
+* Création d'un bouton qui applique le style Markdown sur tout le document ou une sélection du document
