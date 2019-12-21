@@ -18,7 +18,7 @@ Le médecin écrairait alors "1c2c3c" et se traduirait automatiquement par l'exe
 
 ### Appliquer un style
 
-Microsoft word est le logiciel choisi par de nombreux hopitals pour la rédaction d'ordonnance.
+Microsoft word est le logiciel choisi par de nombreux hopitaux pour la rédaction d'ordonnance.
 Une ordonnance bien stylisée est de meilleure qualité.
 Une façon de gagner du temps de stylisation serait d'écrire du texte dans un langage permettant d'appliquer un style comme exemple le markdown.
 Par exemple un texte écrit comme cela : ``**texte en gras**`` sera traduit par l'outil comme cela : **texte en gras**.
