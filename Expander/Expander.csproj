@@ -12,12 +12,35 @@
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <DefineConstants>VSTO40</DefineConstants>
     <OfficeApplication>Word</OfficeApplication>
-    <BootstrapperEnabled>true</BootstrapperEnabled>
-    <BootstrapperComponentsLocation>HomeSite</BootstrapperComponentsLocation>
     <ProjectGuid>{288AC825-8131-4362-9888-0A883F34AB87}</ProjectGuid>
     <SolutionID>29fc2e6d-5ae1-43cd-b223-2f66a5097cd0</SolutionID>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+    <PublishUrl>publish\</PublishUrl>
+    <InstallUrl />
+    <TargetCulture>en</TargetCulture>
+    <ApplicationVersion>1.0.0.0</ApplicationVersion>
+    <AutoIncrementApplicationRevision>true</AutoIncrementApplicationRevision>
+    <UpdateEnabled>true</UpdateEnabled>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>days</UpdateIntervalUnits>
+    <IsWebBootstrapper>False</IsWebBootstrapper>
+    <ProductName>Expander</ProductName>
+    <PublisherName />
+    <SupportUrl />
+    <FriendlyName>Expander</FriendlyName>
+    <OfficeApplicationDescription />
   </PropertyGroup>
   <ItemGroup>
+    <BootstrapperPackage Include=".NETFramework,Version=v4.7.2">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4.7.2 %28x86 and x64%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
     <BootstrapperPackage Include="Microsoft.VSTORuntime.4.0">
       <Visible>False</Visible>
       <ProductName>Microsoft Visual Studio 2010 Tools for Office Runtime %28x86 and x64%29</ProductName>
@@ -114,6 +137,7 @@
     <Compile Include="ThisDocument.cs">
       <DependentUpon>Expander.dotm</DependentUpon>
     </Compile>
+    <None Include="Expander_1_TemporaryKey.pfx" />
     <None Include="Expander_TemporaryKey.pfx" />
     <None Include="ThisDocument.Designer.xml">
       <DependentUpon>ThisDocument.cs</DependentUpon>
@@ -149,10 +173,13 @@
     <SignManifests>true</SignManifests>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestKeyFile>Expander_TemporaryKey.pfx</ManifestKeyFile>
+    <ManifestKeyFile>Expander_1_TemporaryKey.pfx</ManifestKeyFile>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestCertificateThumbprint>4CD6D696229C26A5A64C0C135C9BB4A1BA1D678E</ManifestCertificateThumbprint>
+    <ManifestCertificateThumbprint>4F63B077A8DBCFBE30683E43D08C38D0B6AC0CEF</ManifestCertificateThumbprint>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>false</SignAssembly>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(VSToolsPath)\OfficeTools\Microsoft.VisualStudio.Tools.Office.targets" Condition="'$(VSToolsPath)' != ''" />
