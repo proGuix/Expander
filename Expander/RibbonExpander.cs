@@ -9,22 +9,33 @@ using System.Xml.Schema;
 using System.IO;
 using System.Xml;
 using System.Reflection;
+using System.Windows.Automation;
+using System.Windows;
+using System.Drawing;
+using System.Diagnostics;
+using System.Windows.Input;
 
 namespace Expander
 {
     public partial class RIBBON_EXPANDER
     {
-        Dictionary<String, String> m_oMap;
+        Dictionary<String, String> m_oMap = null;
+        private KeyboardListener m_lKeyBoard = null;
 
         private void RibbonExpander_Load(object sender, RibbonUIEventArgs e)
         {
+            m_lKeyBoard = new KeyboardListener();
+            m_lKeyBoard.OnKeyPressed += Listener_OnKeyPressed;
 
+            if (CHECKBOX_AUTOEXPAND.Checked == true)
+            {
+                m_lKeyBoard.HookKeyboard();
+            }
         }
 
         private void AllExpand_Click(object sender, RibbonControlEventArgs e)
         {
             Word.Find oFind = Globals.ThisDocument.Application.Selection.Find;
-            oFind.ClearFormatting();
 
             foreach (KeyValuePair<String, String> oEntry in m_oMap)
             {
@@ -37,7 +48,33 @@ namespace Expander
 
         private void AutoExpand_Click(object sender, RibbonControlEventArgs e)
         {
+            if (CHECKBOX_AUTOEXPAND.Checked == true)
+            {
+                m_lKeyBoard.HookKeyboard();
+            }
+            else
+            {
+                m_lKeyBoard.UnHookKeyboard();
+            }
+        }
 
+        void Listener_OnKeyPressed(object sender, KeyPressedArgs e)
+        {
+            if (Globals.ThisDocument.m_oPanelDoc != null && AutomationElement.FocusedElement == Globals.ThisDocument.m_oPanelDoc)
+            {
+                //Debug.WriteLine("Keys: " + e.KeyPressed + " Ctrl: " + e.Ctrl + " Alt: " + e.Alt);
+                if (e.Ctrl == false && e.Alt == false &&
+                    (e.KeyPressed == " " || 
+                     e.KeyPressed == "." || 
+                     e.KeyPressed == "," ||
+                     e.KeyPressed == ";" ||
+                     e.KeyPressed == "!" ||
+                     e.KeyPressed == "?" ||
+                     e.KeyPressed == "\r"))
+                {
+                    AutoExpand();
+                }
+            }
         }
 
         private void LoadProfile_Click(object sender, RibbonControlEventArgs e)
@@ -89,7 +126,44 @@ namespace Expander
 
         private void SetProfileDefault_Click(object sender, RibbonControlEventArgs e)
         {
+        }
 
+        private void AutoExpand()
+        {
+            Word.Selection currentSelection = Globals.ThisDocument.Application.Selection;
+            // Test to see if selection is an insertion point.
+            if (currentSelection.Type == Word.WdSelectionType.wdSelectionIP)
+            {
+                var oRng = currentSelection.Range;
+                oRng.MoveStart(Word.WdUnits.wdWord, -1);
+                if (oRng != null && m_oMap != null)
+                {
+                    String sText = oRng.Text;
+                    if(sText != "")
+                    {
+                        String sKey = sText;
+                        String sPref = "";
+                        int nPosApos = sText.IndexOf('\'');
+                        if (nPosApos == -1)
+                        {
+                            nPosApos = sText.IndexOf('’');
+                        }
+                        if (nPosApos != sText.Length - 1)
+                        {
+                            if (nPosApos != -1)
+                            {
+                                sKey = sText.Substring(nPosApos + 1, sText.Length - nPosApos - 1);
+                                sPref = sText.Substring(0, nPosApos + 1);
+                            }
+                            if (m_oMap.ContainsKey(sKey))
+                            {
+                                oRng.Delete();
+                                currentSelection.TypeText(sPref + m_oMap[sKey]);
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 }

@@ -35,17 +35,17 @@
         private void InitializeComponent()
         {
             this.MENU_EXPANDER = this.Factory.CreateRibbonTab();
+            this.group1 = this.Factory.CreateRibbonGroup();
             this.BUTTON_ALL_EXPAND = this.Factory.CreateRibbonButton();
+            this.label1 = this.Factory.CreateRibbonLabel();
             this.CHECKBOX_AUTOEXPAND = this.Factory.CreateRibbonCheckBox();
             this.BUTTON_LOAD_PROFILE = this.Factory.CreateRibbonButton();
             this.BUTTON_SET_PROFILE_DEFAULT = this.Factory.CreateRibbonButton();
             this.GROUP_EXPAND_MARKDOWN = this.Factory.CreateRibbonGroup();
             this.BUTTON_EXPAND_MARKDOWN = this.Factory.CreateRibbonButton();
-            this.group1 = this.Factory.CreateRibbonGroup();
-            this.label1 = this.Factory.CreateRibbonLabel();
             this.MENU_EXPANDER.SuspendLayout();
-            this.GROUP_EXPAND_MARKDOWN.SuspendLayout();
             this.group1.SuspendLayout();
+            this.GROUP_EXPAND_MARKDOWN.SuspendLayout();
             this.SuspendLayout();
             // 
             // MENU_EXPANDER
@@ -56,6 +56,16 @@
             this.MENU_EXPANDER.Label = "Expander";
             this.MENU_EXPANDER.Name = "MENU_EXPANDER";
             // 
+            // group1
+            // 
+            this.group1.Items.Add(this.BUTTON_ALL_EXPAND);
+            this.group1.Items.Add(this.label1);
+            this.group1.Items.Add(this.CHECKBOX_AUTOEXPAND);
+            this.group1.Items.Add(this.BUTTON_LOAD_PROFILE);
+            this.group1.Items.Add(this.BUTTON_SET_PROFILE_DEFAULT);
+            this.group1.Label = "Snippets";
+            this.group1.Name = "group1";
+            // 
             // BUTTON_ALL_EXPAND
             // 
             this.BUTTON_ALL_EXPAND.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeLarge;
@@ -65,6 +75,11 @@
             this.BUTTON_ALL_EXPAND.ScreenTip = "Déplier tous les Snippets dans le Document";
             this.BUTTON_ALL_EXPAND.ShowImage = true;
             this.BUTTON_ALL_EXPAND.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.AllExpand_Click);
+            // 
+            // label1
+            // 
+            this.label1.Label = "Options";
+            this.label1.Name = "label1";
             // 
             // CHECKBOX_AUTOEXPAND
             // 
@@ -106,21 +121,6 @@
             this.BUTTON_EXPAND_MARKDOWN.OfficeImageId = "OutlineExpand";
             this.BUTTON_EXPAND_MARKDOWN.ShowImage = true;
             // 
-            // group1
-            // 
-            this.group1.Items.Add(this.BUTTON_ALL_EXPAND);
-            this.group1.Items.Add(this.label1);
-            this.group1.Items.Add(this.CHECKBOX_AUTOEXPAND);
-            this.group1.Items.Add(this.BUTTON_LOAD_PROFILE);
-            this.group1.Items.Add(this.BUTTON_SET_PROFILE_DEFAULT);
-            this.group1.Label = "Snippets";
-            this.group1.Name = "group1";
-            // 
-            // label1
-            // 
-            this.label1.Label = "Options";
-            this.label1.Name = "label1";
-            // 
             // RIBBON_EXPANDER
             // 
             this.Name = "RIBBON_EXPANDER";
@@ -129,10 +129,10 @@
             this.Load += new Microsoft.Office.Tools.Ribbon.RibbonUIEventHandler(this.RibbonExpander_Load);
             this.MENU_EXPANDER.ResumeLayout(false);
             this.MENU_EXPANDER.PerformLayout();
-            this.GROUP_EXPAND_MARKDOWN.ResumeLayout(false);
-            this.GROUP_EXPAND_MARKDOWN.PerformLayout();
             this.group1.ResumeLayout(false);
             this.group1.PerformLayout();
+            this.GROUP_EXPAND_MARKDOWN.ResumeLayout(false);
+            this.GROUP_EXPAND_MARKDOWN.PerformLayout();
             this.ResumeLayout(false);
 
         }
