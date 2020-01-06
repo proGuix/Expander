@@ -1,25 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using Microsoft.Office.Tools.Ribbon;
-using System.Xml.Linq;
 using Word = Microsoft.Office.Interop.Word;
 using System.Windows.Forms;
-using System.Xml.Schema;
-using System.IO;
-using System.Xml;
-using System.Reflection;
 using System.Windows.Automation;
-using System.Windows;
-using System.Drawing;
-using System.Diagnostics;
-using System.Windows.Input;
 
 namespace Expander
 {
-    public partial class RIBBON_EXPANDER
+    public partial class RibbonExpander
     {
-        Dictionary<String, String> m_oMap = null;
+        private Dictionary<String, String> m_oMap = null;
         private KeyboardListener m_lKeyBoard = null;
 
         private void RibbonExpander_Load(object sender, RibbonUIEventArgs e)
@@ -27,7 +17,7 @@ namespace Expander
             m_lKeyBoard = new KeyboardListener();
             m_lKeyBoard.OnKeyPressed += Listener_OnKeyPressed;
 
-            if (CHECKBOX_AUTOEXPAND.Checked == true)
+            if (m_oCheckBoxAutoExpand.Checked == true)
             {
                 m_lKeyBoard.HookKeyboard();
             }
@@ -48,7 +38,7 @@ namespace Expander
 
         private void AutoExpand_Click(object sender, RibbonControlEventArgs e)
         {
-            if (CHECKBOX_AUTOEXPAND.Checked == true)
+            if (m_oCheckBoxAutoExpand.Checked == true)
             {
                 m_lKeyBoard.HookKeyboard();
             }
@@ -87,45 +77,18 @@ namespace Expander
 
             if (oOpenFileDialog.ShowDialog() == DialogResult.OK)
             {
-                String sFilePath = oOpenFileDialog.FileName;
-                try
+                FormLoadProfile f = new FormLoadProfile();
+                f.SetFilePath(oOpenFileDialog.FileName);
+                if (f.ShowDialog() == DialogResult.OK)
                 {
-                    XDocument oDoc = XDocument.Load(sFilePath);
-
-                    Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("Expander.SchemaProfile.xsd");
-                    StreamReader reader = new StreamReader(stream);
-                    String sXsdMarkup = reader.ReadToEnd();
-
-                    XmlSchemaSet oSchemas = new XmlSchemaSet();
-                    oSchemas.Add("", XmlReader.Create(new StringReader(sXsdMarkup)));
-                    oDoc.Validate(oSchemas, null);
-
-                    var tResult = (from snippet in oDoc.Descendants("snippet")
-                                  select new
-                                  {
-                                      sTextUnexpand = snippet.Element("text-unexpanded").Value,
-                                      sTextExpand = snippet.Element("text-expanded").Value
-                                  }
-                                 );
-                    m_oMap = new Dictionary<String, String>();
-                    foreach (var tSnippet in tResult)
-                    {
-                        m_oMap.Add(tSnippet.sTextUnexpand.Trim(), tSnippet.sTextExpand.Trim());
-                    }
-                }
-                catch (XmlException)
-                {
-                    MessageBox.Show("Le fichier \"" + sFilePath + "\" n'est pas un XML valide", "Expander Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-                catch (XmlSchemaValidationException) 
-                {
-                    MessageBox.Show("Le fichier \"" + sFilePath + "\" ne valide pas le schéma XSD", "Expander Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    m_oMap = f.GetMap();
                 }
             }
         }
 
         private void SetProfileDefault_Click(object sender, RibbonControlEventArgs e)
         {
+           
         }
 
         private void AutoExpand()

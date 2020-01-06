@@ -128,10 +128,22 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="FormLoadProfile.resx">
+      <DependentUpon>FormLoadProfile.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="RibbonExpander.resx">
       <DependentUpon>RibbonExpander.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="ThisDocument.resx">
+      <DependentUpon>ThisDocument.cs</DependentUpon>
+    </EmbeddedResource>
     <None Include="Expander.dotm" />
+    <Compile Include="FormLoadProfile.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormLoadProfile.Designer.cs">
+      <DependentUpon>FormLoadProfile.cs</DependentUpon>
+    </Compile>
     <Compile Include="KeyboardListener.cs" />
     <Compile Include="RibbonExpander.cs">
       <SubType>Component</SubType>

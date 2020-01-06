@@ -1,13 +1,5 @@
 ﻿using System;
-using System.Diagnostics;
-using System.Drawing;
-using System.Runtime.InteropServices;
-using System.Windows;
 using System.Windows.Automation;
-using System.Windows.Automation.Text;
-using System.Windows.Forms;
-using Word = Microsoft.Office.Interop.Word;
-using System.Windows.Input;
 
 namespace Expander
 {
