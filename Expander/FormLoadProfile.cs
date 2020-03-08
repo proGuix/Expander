@@ -11,6 +11,7 @@ using System.Reflection;
 using System.Xml.Schema;
 using System.Xml;
 using System.Globalization;
+using System.Diagnostics;
 
 namespace Expander
 {
@@ -18,6 +19,8 @@ namespace Expander
     {
         private const int CP_NOCLOSE_BUTTON = 0x200;
         private Dictionary<String, String> m_oMap = null;
+        private List<String> m_oLstDoublon = null;
+        private List<String> m_oLstBadWord = null;
         private String m_sFilePathXML = "";
         private XDocument m_oDoc = null;
         private int m_nHeightTextBoxLog = 0;
@@ -74,7 +77,6 @@ namespace Expander
                 else
                 {
                     m_oDoc = XDocument.Load(m_sFilePathXML);
-                    Thread.Sleep(1000);
                     e.Result = 0;
                     worker.ReportProgress(100);
                 }
@@ -82,8 +84,8 @@ namespace Expander
             catch (XmlException)
             {
                 e.Result = 1;
-                worker.ReportProgress(100);
             }
+            Thread.Sleep(500);
         }
 
         private void BackWorkLoadFile_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
@@ -106,7 +108,7 @@ namespace Expander
             }
             else
             {
-                switch((int)e.Result)
+                switch ((int)e.Result)
                 {
                     case 0:
                         Log("Lecture du fichier OK");
@@ -143,7 +145,6 @@ namespace Expander
                     XmlSchemaSet oSchemas = new XmlSchemaSet();
                     oSchemas.Add("", XmlReader.Create(new StringReader(sXsdMarkup)));
                     m_oDoc.Validate(oSchemas, null);
-                    Thread.Sleep(1000);
                     e.Result = 0;
                     worker.ReportProgress(100);
                 }
@@ -151,8 +152,8 @@ namespace Expander
             catch (XmlSchemaValidationException)
             {
                 e.Result = 1;
-                worker.ReportProgress(100);
             }
+            Thread.Sleep(500);
         }
 
         private void BackWorkValidateFile_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
@@ -175,7 +176,7 @@ namespace Expander
             }
             else
             {
-                switch(e.Result)
+                switch ((int)e.Result)
                 {
                     case 0:
                         Log("Validation du fichier OK");
@@ -208,8 +209,12 @@ namespace Expander
                                                                     snippet.Element("text-expanded").Value
                                                                 );
             m_oMap = new Dictionary<String, String>();
+            m_oLstDoublon = new List<String>();
+            m_oLstBadWord = new List<String>();
             int nCountResult = tResult.Count();
-            for (int i = 0; i < nCountResult; i++)
+            e.Result = 0;
+            bool bBreak = false;
+            for (int i = 0; i < nCountResult && bBreak == false; i++)
             {
                 if (m_bToCancel == true || worker.CancellationPending == true)
                 {
@@ -218,10 +223,43 @@ namespace Expander
                 }
                 else
                 {
-                    m_oMap.Add(tResult.ElementAt(i).Key.Trim(), tResult.ElementAt(i).Value.Trim());
+                    String key = tResult.ElementAt(i).Key.Trim();
+                    if (RibbonExpander.ConatainsSep(key, RibbonExpander.sSeps) == false)
+                    {
+                        if (m_oMap.ContainsKey(key) == false)
+                        {
+                            String value = tResult.ElementAt(i).Value.Trim();
+                            m_oMap.Add(key, value);
+                        }
+                        else if (m_oLstDoublon.Count < 50)
+                        {
+                            if (m_oLstDoublon.Contains(key) == false)
+                            {
+                                e.Result = 1;
+                                m_oLstDoublon.Add(key);
+                            }
+                        }
+                        else
+                        {
+                            bBreak = true;
+                        }
+                    }
+                    else if (m_oLstBadWord.Count < 50)
+                    {
+                        if (m_oLstBadWord.Contains(key) == false)
+                        {
+                            e.Result = 2;
+                            m_oLstBadWord.Add(key);
+                        }
+                    }
+                    else
+                    {
+                        bBreak = true;
+                    }
                     worker.ReportProgress(((i + 1) * 100) / nCountResult);
                 }
             }
+            Thread.Sleep(500);
         }
 
         private void BackWorkLoadData_ProgressChanged(object sender, ProgressChangedEventArgs e)
@@ -247,11 +285,63 @@ namespace Expander
             }
             else
             {
-                m_oLabelStatus.Text = "Succès";
-                Log("Chargement des données OK");
-                m_oButtonOK.Enabled = true;
-                m_oButtonOK.Focus();
-                m_bIsCompleted = true;
+                String sLog = "";
+                switch ((int)e.Result)
+                {
+                    case 0:
+                        m_oLabelStatus.Text = "Succès";
+                        Log("Chargement des données OK");
+                        m_oButtonOK.Enabled = true;
+                        m_oButtonOK.Focus();
+                        m_bIsCompleted = true;
+                        break;
+                    case 1:
+                        m_oLabelStatus.Text = "Erreur";
+                        if (m_oLstDoublon.Count == 1)
+                        {
+                            sLog = "Les doublons sont interdits, corriger la clef suivante : ";
+                            sLog += m_oLstDoublon[0];
+                        }
+                        else
+                        {
+                            sLog = "Les doublons sont interdits, ci-dessous la liste des ";
+                            sLog += m_oLstDoublon.Count;
+                            sLog += " premières clefs en erreur :";
+                            for (int i = 0; i < m_oLstDoublon.Count; i++)
+                            {
+                                sLog += "\r\n";
+                                sLog += i + 1;
+                                sLog += ". ";
+                                sLog += m_oLstDoublon[i];
+                            }
+                        }
+                        Log(sLog);
+                        m_bIsError = true;
+                        break;
+                    case 2:
+                        m_oLabelStatus.Text = "Erreur";
+                        if (m_oLstBadWord.Count == 1)
+                        {
+                            sLog = "Les ponctuations, espaces et sauts de ligne sont interdits, corriger la clef suivante : ";
+                            sLog += RibbonExpander.DoubleAntiSlash(m_oLstBadWord[0]);
+                        }
+                        else
+                        {
+                            sLog = "Les ponctuations, espaces et sauts de ligne sont interdits, ci-dessous la liste des ";
+                            sLog += m_oLstBadWord.Count;
+                            sLog += " premières clefs en erreur :";
+                            for (int i = 0; i < m_oLstBadWord.Count; i++)
+                            {
+                                sLog += "\r\n";
+                                sLog += i + 1;
+                                sLog += ". ";
+                                sLog += RibbonExpander.DoubleAntiSlash(m_oLstBadWord[i]);
+                            }
+                        }
+                        Log(sLog);
+                        m_bIsError = true;
+                        break;
+                }
             }
         }
 
@@ -278,7 +368,7 @@ namespace Expander
         private void ButtonDetails_Click(object sender, EventArgs e)
         {
             m_bIsDetail = !m_bIsDetail;
-            if(m_bIsDetail == true)
+            if (m_bIsDetail == true)
             {
                 m_oTextBoxLog.Enabled = true;
                 m_oButtonDetails.Text = "Cacher détails";
